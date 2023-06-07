@@ -82,22 +82,22 @@ void DMA_init() {
     DMA2_Stream2->CR &= ~DMA_SxCR_PSIZE;
 
     // Установите режим увеличения объема памяти
-	DMA1_Stream6->CR |= DMA_SxCR_MINC;
-	DMA2_Stream2->CR |= DMA_SxCR_MINC;
+    DMA1_Stream6->CR |= DMA_SxCR_MINC;
+    DMA2_Stream2->CR |= DMA_SxCR_MINC;
 
     // Включаем режим работы
     DMA1_Stream6->CR |= (0x01<<6);  // Из памяти в перефирию
     DMA2_Stream2->CR &= ~(3UL<<6);  // Из переферии в память
 
-	// Включить циклическую запись
-	DMA1_Stream6->CR |= DMA_SxCR_CIRC;
-	DMA2_Stream2->CR |= DMA_SxCR_CIRC;
-    
+    // Включить циклическую запись
+    DMA1_Stream6->CR |= DMA_SxCR_CIRC;
+    DMA2_Stream2->CR |= DMA_SxCR_CIRC;
+
     //  Включаем прерывания
     DMA1_Stream6->CR |= DMA_SxCR_TCIE;
     DMA2_Stream2->CR |= DMA_SxCR_TCIE;
 
-	// Количество элементов данных, подлежащих передаче	
+    // Количество элементов данных, подлежащих передаче	
     DMA1_Stream6->NDTR = SIZE;
     DMA2_Stream2->NDTR = SIZE;
 
