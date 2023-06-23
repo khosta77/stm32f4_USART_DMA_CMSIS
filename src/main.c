@@ -46,13 +46,11 @@ void USART_init() {
 
 uint8_t usart1_receive_buffer[(2 * SIZE)];
 uint8_t usart2_receive_buffer[(2 * SIZE)];
-uint8_t mrk1 = 0x01, mrk2 = 0x01;  // маркеры окнчания и начала передачи данных
 
 void DMA1_Stream6_IRQHandler(void) {
     if ((DMA1->HISR & DMA_HISR_TCIF6) == DMA_HISR_TCIF6) {
         GPIOD->ODR ^= GPIO_ODR_OD12;
         DMA1->HIFCR |= DMA_HIFCR_CTCIF6;
-//      mrk1 =0x1;
     }
 }
 
@@ -60,7 +58,6 @@ void DMA2_Stream2_IRQHandler(void) {
     if ((DMA2->LISR & DMA_LISR_TCIF2) == DMA_LISR_TCIF2) {
         GPIOD->ODR ^= GPIO_ODR_OD13;
         DMA2->LIFCR |= DMA_LIFCR_CTCIF2;
-   //     mrk2 = 0x01;
     }
 }
 
@@ -125,23 +122,9 @@ void write_dma(uint8_t *df, uint16_t size) {
     for (uint16_t i = 0; i < size; i++) {
         *(usart2_receive_buffer + i) = *(df + i);
     }
-
-    DMA1_Stream6->CR &= ~DMA_SxCR_EN;
-    DMA1_Stream6->NDTR |= size;
-    DMA1_Stream6->CR |= DMA_SxCR_EN;
- //   while (!mrk1) {}
- //   mrk1 = 0x0;
 }
 
 void read_dma(uint8_t *df, uint16_t size) {
-    DMA2_Stream2->CR &= ~DMA_SxCR_EN;
-    DMA2_Stream2->NDTR |= size;
-    DMA2_Stream2->CR |= DMA_SxCR_EN;
-
-  //  while (!mrk2) {
-        //GPIOD->ODR ^= GPIO_ODR_OD13;
-  //  }
-  //  mrk2 = 0x0; 
     for (uint16_t i = 0; i < size; i++) {
         *(df + i) = *(usart1_receive_buffer + i);
     }
@@ -152,6 +135,9 @@ int main(void) {
     GPIO_init();
     USART_init();
     DMA_init();
+//    DMA1_Stream6->CR |= DMA_SxCR_EN;
+//    DMA2_Stream2->CR |= DMA_SxCR_EN;
+
     // инициализируем массив который будет отдан на запись
     uint8_t temp[(2 * SIZE)];
     for (int i = 0; i < (2 * SIZE); i++) {
